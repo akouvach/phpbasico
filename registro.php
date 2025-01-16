@@ -116,6 +116,6 @@ echo Menu();
     </div>
     
 <?php
-    }
+}
 readfile('footer.html');
 ?>
