@@ -27,8 +27,8 @@ function Menu(){
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0" method="post" action="buscar.php">
-              <input class="form-control mr-sm-2" type="search" placeholder="Buscar">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+              <input class="form-control mr-sm-2" type="search" placeholder="Buscar" name="texto" id="texto">
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="accion" id="accion" value="buscar">Buscar</button>
             </form>
           </div>
         </nav>    

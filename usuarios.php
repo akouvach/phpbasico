@@ -1,7 +1,7 @@
-<?php  
-    include("common.php"); 
-    include("db.php"); 
-    ?> 
+<?php 
+include_once("common.php"); 
+include_once("db.php"); 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
