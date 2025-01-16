@@ -1,22 +1,17 @@
 <?php 
 include_once("common.php"); 
 include_once("db.php"); 
+
+readfile('header.html');
+echo Menu(); 
 ?>
 
+    <h1>Ingrese</h1>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> 
+<?php    
 
-</head>
-
-<?php
     if (isset($_POST["accion"])){
+
 
         // Inicializo la variables
         $email = "";
@@ -75,8 +70,15 @@ include_once("db.php");
                             // Verificar la password 
                             if (password_verify($pass, $row["pass"])) {
                                 echo "Login successful!";
+                                $_SESSION['id'] = $row["id"]; // el usuario logueado
+                                $_SESSION['is_admin'] = $row["is_admin"]; // si el usuario es administrador
+                                $_SESSION['nombre'] = $row["nombre"]; // si el usuario es administrador
+                                // redirijo a la pagina inicial y termino de procesar esta
+                                header("Location: agenda.php");
+                                die();
+
                             } else {
-                                echo "Invalid password.";
+                                echo "usuario/contraseña inválida";
                             }
 
                         }
@@ -97,11 +99,6 @@ include_once("db.php");
     } else {
 ?>
 
-
-<body>
-    <div class="container">
-        <?php echo Menu(); ?>
-        <h1>Ingrese</h1>
     
 
         <form method="post" action="login.php">
@@ -116,60 +113,10 @@ include_once("db.php");
             <div class="form-check">
                 <button type="submit" class="btn btn-primary" name="accion" id="accion" value="ingresar">Ingrese</button>
             </div>
-    </form>
-
-
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-</body>
-
+        </form>
 
 <?php
     }
+readfile('footer.html');
 ?>
 
-</html>
-
-<!-- // Database connection details
-$servername = "localhost";
-$username = "your_username";
-$password = "your_password";
-$dbname = "your_database";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Get user input (replace with actual user input)
-$enteredUsername = "your_username";
-$enteredPassword = "your_password";
-
-// Retrieve hashed password from database
-$sql = "SELECT hashed_password FROM users WHERE username = '$enteredUsername'"; 
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $hashedPasswordFromDB = $row["hashed_password"];
-
-    // Verify the password
-    if (password_verify($enteredPassword, $hashedPasswordFromDB)) {
-        echo "Login successful!";
-    } else {
-        echo "Invalid password.";
-    }
-} else {
-    echo "User not found.";
-}
-
-$conn->close();
- -->

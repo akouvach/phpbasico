@@ -1,39 +1,52 @@
 <?php
+ini_set('session.gc_maxlifetime',1800);
+
+session_start(); // para el manejo de sesiones que me permite almacenar valores entre llamados.
+if(isset($_SESSION['last_activity']) && ( time()-$_SESSION['last_activity'] > 1800 )){
+    session_unset();
+    session_destroy();
+}
+
+$_SESSION['last_activity'] = time();
 
 function Menu(){
 
-    return <<<EOD
-    <div class="container">
+    $lineas="";
+    $logueado = false;
+    if(isset($_SESSION["id"]) && $_SESSION["id"]>0){
+        // esta logoneado
+        $logueado=true;
+    }
 
+    if($logueado){
+        // echo "esta logueado";
+        $lineas = $lineas . "<li class='nav-item'><a class='nav-link' href='/agenda.php'>Agenda</a></li>";
+        $lineas = $lineas . "<li class='nav-item'><a class='nav-link' href='/cerrar.php'>Salir</a></li>";
+    } else {
+        $lineas = $lineas . "<li class='nav-item'><a class='nav-link' href='/login.php'>Ingresar</a></li>";
+        $lineas = $lineas . "<li class='nav-item'><a class='nav-link' href='/registro.php'>Registarse</a></li>";
+    }
+
+    $rdo = <<<EOD
+    <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
           <a class="navbar-brand" href="/index.php"><img src="./images/agenda.jpg" width="80"></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-        
           <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="/agenda.php">Agenda</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login.php">Ingresar</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/registro.php">Registrese</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="/cerrar.php">Salir</a>
-                </li>
+                $lineas
             </ul>
-            <form class="form-inline my-2 my-lg-0" method="post" action="buscar.php">
+            <form class="form-inline my-2 my-lg-0" method="post" action="buscar.php" onsubmit="return validarBuscar(event);">
               <input class="form-control mr-sm-2" type="search" placeholder="Buscar" name="texto" id="texto">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="accion" id="accion" value="buscar">Buscar</button>
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="accion_buscar" id="accion_buscar" value="buscar">Buscar</button>
             </form>
           </div>
         </nav>    
     </div>
     EOD;
+    return $rdo;
 }
 
 function mostrarError($mensaje){
