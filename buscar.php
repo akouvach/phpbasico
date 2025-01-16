@@ -12,10 +12,9 @@ readfile('header.html');
         <table class="table table-hover">
             <thead>
                 <tr>
-                <th scope="col">#</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Email</th>
-                <th scope="col">Pass</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Tema</th>
+                <th scope="col">Tags</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,7 +42,7 @@ readfile('header.html');
             // Datos de ejemplo
             $valores = [
                 new Item("nosotros", "descripcion,objetivo,la empresa","Nosotros","/index.php"),
-                new Item("registro", "registro,sign up","Administracion","/registrese.php"),
+                new Item("registro", "registro,sign up","Administracion","/registro.php"),
                 new Item("login", "ingreso, login","Administracion","/login.php"),
                 new Item("usuarios", "usuarios","Administracion","/usuarios.php"),
             ];
@@ -88,9 +87,8 @@ readfile('header.html');
                             foreach ($filteredItems as $item){
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($item->categoria) . "</td>";
-                                echo "<td>" . htmlspecialchars($item->nombre) . "</td>";
+                                echo "<td><a href='" . $item->link . "'>" . htmlspecialchars($item->nombre) . "</a></td>";
                                 echo "<td>" . htmlspecialchars($item->tags) . "</td>";
-                                echo "<td><a href='" . htmlspecialchars($item->link) . "'> --> </a></td>";
                                 echo "</tr>";
     
                             }

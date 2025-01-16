@@ -25,7 +25,6 @@ if(!isset($_SESSION["id"])){
                 </div>
             </div>
         </form>
-
         
         
         <?php
@@ -128,67 +127,116 @@ if(!isset($_SESSION["id"])){
                         };
 
                         db_close($conn);
-
+                        
                     }
-
+                    
                     break;
+                    
+                case "borrar":
+
+                        // variables para el control de errores
+                        $ok = true; // utilizao esta variable para hacer la verificación de valores recibidos
+                        $errores = []; // acá voy a poner los sucesivos errores para después mostrarlos
+                        $id = 0;
+    
+                        // pregunto si tienen cargado algo..
+                        if(isset($_POST["id"])){
+                            $id = $_POST["id"];            
+                        } else {
+                            $ok = false;
+                            array_push($errores, "El id no es correcto");
+                        }
+    
+                        if(!$ok){
+                            // hubo errores
+                            print("<br>Errores:<br>");
+                            print_r($errores);
+                            print("<br><a href='javascript:history.go(-1);'>Volver</a>");
+    
+                        } else {
+    
+                            $owner = $_SESSION['id'];
+                            $params = []; 
+
+                            echo $owner, $id;
+    
+                            // Create connection
+                            $conn = db_open();                    
+
+                            $sql = "delete from agenda where owner = ? and id = ?";
+                            array_push($params, $owner, $id); 
+
+                            echo $sql;
+                            echo "<br>Owner:" . $owner;
+                            echo print_r($params);
+                            
+                            $result= mysqli_execute_query($conn,$sql,$params);
+                            if(!$result){
+                                mostrarError(sprintf("Error borrar los registros %s ", $sql)); 
+                            } 
+   
+                            db_close($conn);
+
+                            header("Location: agenda.php");
+                            die();                            
+                            
+                        }
+                        
+                        break;
 
                 case "buscar":
-
+                        
+                    $filas = "";
                     $owner = $_SESSION['id'];
                     $texto = "";
-                    if(isset($_POST["texto"]) ){
-                        $texto = $_POST["texto"];            
+                    if(isset($_POST["texto"]) && $_POST["texto"]!=""){  // si puso algo en buscar, lo filtro....
+                        $texto = "%" . $_POST["texto"] . "%";            
                     }
 
                     $sql = "";
+                    $params = [];
                     
                     // Create connection
-                    $conn = db_open();                    
-
+                    $conn = db_open();         
+                    
                     if($texto==""){
                         $sql = "select * from agenda where owner = ? or visibilidad = 2";
-                        $stmt = mysqli_prepare(
-                            $conn,
-                            $sql
-                        );
-                        mysqli_stmt_bind_param($stmt,'i',$owner); // el ss significa que tanto el primer como el segundo parametro son strings.
-                        
+                        array_push($params, $owner); 
                     } else {
-                        $sql = "select * from agenda where (owner = ? and tags like ?) or (visibilidad = 2 and tags like ?)";
-                        $stmt = mysqli_prepare(
-                            $conn,
-                            $sql
-                        );
-                        mysqli_stmt_bind_param($stmt,'iss',$owner, $texto, $texto); // el ss significa que tanto el primer como el segundo parametro son strings.
-                        
+                        $sql = "select * from agenda where (owner = ? and tags like ?)  or (visibilidad = 2 and tags like ?)";
+                        array_push($params, $owner, $texto, $texto); 
                     }
                     echo $sql;
                     echo "<br>Owner:" . $owner;
+                    echo print_r($params);
                     
-                    $result = mysqli_stmt_execute($stmt);
+                    $result= mysqli_execute_query($conn,$sql,$params);
                     if(!$result){
                         mostrarError(sprintf("Error al recuperar los datos de usuario %s ", $sql)); 
                     } else {
                         // pongo los resultados en una tabla
 
-                        $filas = "";
-
-                        echo <<<ANDY
+?>
                         <table class="table table-hover">
                         <thead>
                             <tr>
-                            <th scope="col">#</th>
+                            <th scope="col"> - </th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Email</th>
                             <th scope="col">Telefono</th>
+                            <th scope="col">Tags</th>
+                            <th scope="col">Ciudad</th>
+                            <th scope="col">Cumpleaños</th>
                             </tr>
                         </thead>
                         <tbody>
-                        ANDY;
 
+<?php
                         foreach($result as $row){
-                            $filas = $filas . "<tr><th scope='row'>" . $row['id'] . "</th><td>" .  $row['nombre'] . "</td> <td>" . $row['email'] . "</td><td>" . $row['telefono'] . "</td></tr>";
+                            $filas = $filas . "<tr>" . 
+                            "<td><form id='". $row["id"] . "' action='agenda.php' method='post'><button type='submit' name='accion' value='borrar'><input type=hidden name='id' value='" . $row['id'] .  "'><i class='material-icons' >delete</i></button></form></td>" . 
+                            "<td>" .  $row['nombre'] . "</td> <td>" . $row['emails'] . "</td><td>" . $row['telefonos'] . "</td>" . 
+                            "<td>" . $row['tags'] . "</td><td>" . $row['ciudad'] . "</td><td>" . $row['fecha_nac'] . "</td></tr>";
                         }   
 
                     }
@@ -199,6 +247,11 @@ if(!isset($_SESSION["id"])){
 
                     echo $filas;
 
+?>
+                    </tbody>
+                    </table>                    
+
+<?php
                     break;
 
                 default:
@@ -212,6 +265,10 @@ if(!isset($_SESSION["id"])){
 
         
 
+<?php
+}
+
+?>
         <!-- Modal -->
         <div class="modal fade" id="agregarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
@@ -266,7 +323,6 @@ if(!isset($_SESSION["id"])){
           </div>
         </div>
 <?php
-}
 readfile('footer.html');
 ?>
 

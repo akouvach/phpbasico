@@ -21,7 +21,7 @@ function Menu(){
     if($logueado){
         // echo "esta logueado";
         $lineas = $lineas . "<li class='nav-item'><a class='nav-link' href='/agenda.php'>Agenda</a></li>";
-        $lineas = $lineas . "<li class='nav-item'><a class='nav-link' href='/cerrar.php'>Salir</a></li>";
+        $lineas = $lineas . "<li class='nav-item'><a class='nav-link' href='/cerrar.php'>Salir (" . $_SESSION["nombre"] . ")</a></li>";
     } else {
         $lineas = $lineas . "<li class='nav-item'><a class='nav-link' href='/login.php'>Ingresar</a></li>";
         $lineas = $lineas . "<li class='nav-item'><a class='nav-link' href='/registro.php'>Registarse</a></li>";
